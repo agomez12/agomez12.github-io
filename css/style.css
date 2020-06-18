@@ -1,0 +1,14 @@
+body {
+    background-color: none;
+    height: 1000px;
+    margin: 0px;
+}
+
+#main {
+    border: red 1px solid;
+    margin: 50px;
+    width: 800px;
+    height: 800px;
+    color: black;
+    font-size: 40px;
+}
