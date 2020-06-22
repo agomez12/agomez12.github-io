@@ -6,8 +6,8 @@ function setup() {
     canvas.position(0, 0);
     frameRate(30);
 
-    for (i = 0; i < 50; i++) {
-        particles.push(new Particle(random(0, windowWidth), random(0, windowHeight)))
+    for (i = 0; i < 200; i++) {
+        particles.push(new Particle(i, random(0, windowWidth), random(0, windowHeight)))
     } 
 }
 
@@ -30,10 +30,37 @@ function draw() {
     translate(0, -0.25*this.scrollY);
 
     scrollSpeedChange()
+
+    showGrid()
     
     for (i of particles) {
         i.display()
     }
+}
+
+let res = 100
+let gridDistLim = 2
+function evalGrid(x, y) {
+    let xQuad, yQuad
+
+    xQuad = ceil(x/res)
+    yQuad = ceil(y/res)
+
+    return createVector(xQuad, yQuad)
+}
+
+function showGrid() {
+    push()
+    stroke(0, 0, 0, 100)
+    // render vert lines
+    for (i=0; i < windowWidth; i += res) {
+        line(i, 0, i, windowHeight)
+    }
+    // render hor lines
+    for (i=0; i < windowHeight; i += res) {
+        line(0, i, windowWidth, i)
+    }
+    pop()
 }
 
 function testRect() {
@@ -67,10 +94,13 @@ function windowResized() {
 }
 
 class Particle {
-    constructor(x, y) {
-         this.pos = createVector(x, y)
-         this.vel = createVector(random(-1, 1), random(-1, 1))
-         this.size = random(10, 20)
+    constructor(index, x, y) {
+        this.index = index
+        this.pos = createVector(x, y)
+        this.vel = createVector(random(-1, 1), random(-1, 1))
+        this.size = random(10, 20)
+        this.quadCoor = createVector(0, 0)
+        this.lines = []
     }
 
     display() {
@@ -81,11 +111,27 @@ class Particle {
         pop()
         this.move()
         this.limits()
+
+        this.quadCoor = evalGrid(this.pos.x, this.pos.y)
+        //print(this.quadCoor.x, this.quadCoor.y)
+        
+        this.evalLines()
     }
 
     move() {
         this.pos.add(this.vel)
 
+    }
+
+    evalLines() {
+        for (i=0; i < particles.length; i++) {
+            let p = particles[i]
+            if (i !== this.index) {
+                if (p.quadCoor.equals(this.quadCoor.x, this.quadCoor.y)) {
+                    line(p.pos.x, p.pos.y, this.pos.x, this.pos.y)
+                }
+            }
+        }
     }
 
     limits() {
@@ -99,6 +145,10 @@ class Particle {
         } else if (this.pos.y < 0) {
             this.pos.y = windowHeight
         }
-        this.vel.setMag(random(1, 4))
+        this.vel.setMag(random(1, 4)*speed)
     }
+}
+
+class Line {
+
 }
