@@ -1,5 +1,6 @@
 new p5();
 var canvas;
+let idNum = 0
 function setup() {
     canvas = createCanvas(windowWidth, windowHeight);
     canvas.parent("sketch");
@@ -7,8 +8,11 @@ function setup() {
     frameRate(30);
 
     for (i = 0; i < 200; i++) {
-        particles.push(new Particle(i, random(0, windowWidth), random(0, windowHeight)))
-    } 
+        particles.push(new Particle(i, idNum, random(0, windowWidth), random(0, windowHeight)))
+        idNum++
+    }
+
+    smooth()
 }
 
 var rectX = 0
@@ -24,6 +28,7 @@ let birthRate = 800
 let lastBirth = 0
 
 let particles = []
+let lines = []
 
 function draw() {
     background(0, 150, 255);
@@ -32,13 +37,17 @@ function draw() {
     scrollSpeedChange()
 
     showGrid()
-    
+
     for (i of particles) {
         i.display()
     }
+    for (i of lines) {
+        i.display()
+    }
+    
 }
 
-let res = 100
+let res = 50
 let gridDistLim = 2
 function evalGrid(x, y) {
     let xQuad, yQuad
@@ -94,13 +103,13 @@ function windowResized() {
 }
 
 class Particle {
-    constructor(index, x, y) {
+    constructor(index, id, x, y) {
         this.index = index
+        this.id = index
         this.pos = createVector(x, y)
         this.vel = createVector(random(-1, 1), random(-1, 1))
         this.size = random(10, 20)
         this.quadCoor = createVector(0, 0)
-        this.lines = []
     }
 
     display() {
@@ -113,7 +122,7 @@ class Particle {
         this.limits()
 
         this.quadCoor = evalGrid(this.pos.x, this.pos.y)
-        //print(this.quadCoor.x, this.quadCoor.y)
+        // print(this.quadCoor.x, this.quadCoor.y)
         
         this.evalLines()
     }
@@ -128,7 +137,17 @@ class Particle {
             let p = particles[i]
             if (i !== this.index) {
                 if (p.quadCoor.equals(this.quadCoor.x, this.quadCoor.y)) {
-                    line(p.pos.x, p.pos.y, this.pos.x, this.pos.y)
+                    let same = false
+                    for (let k=0; k<lines.length; k++) {
+                        let l = lines[k]
+                        if (l.p1ID !== p.id && l.p2ID !== this.id) {
+                            same == true
+                        }
+                    }
+                    if (same == false) {
+                        lines.push(new Line(p.id, this.id))
+                    }
+                    // line(p.pos.x, p.pos.y, this.pos.x, this.pos.y)
                 }
             }
         }
@@ -150,5 +169,23 @@ class Particle {
 }
 
 class Line {
+    MAX_LENGTH = 100
+    constructor(p1ID, p2ID) {
+        this.p1ID = p1ID
+        this.p2ID = p2ID
+        this.goodLength = true
+    }
 
+    display() {
+        
+
+        if (particles[this.p1ID].pos.dist(particles[this.p2ID].pos) > this.MAX_LENGTH) {
+            this.goodLength = false
+        }
+
+        if (this.goodLength == true) {
+            line(particles[this.p1ID].pos.x, particles[this.p1ID].pos.y, particles[this.p2ID].pos.x, particles[this.p2ID].pos.y)
+
+        }
+    }
 }
