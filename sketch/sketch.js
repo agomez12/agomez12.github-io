@@ -145,7 +145,6 @@ class Particle {
         let accX = STRING_POWER*lineVec.x/this.sizeSq
         let accY = STRING_POWER*lineVec.y/this.sizeSq
         let acc = createVector(accX, accY)
-        print(lineVec)
         this.vel.add(acc)
     }
 
