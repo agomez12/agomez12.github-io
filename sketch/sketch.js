@@ -7,7 +7,7 @@ function setup() {
     canvas.position(0, 0);
     frameRate(30);
 
-    for (i = 0; i < 200; i++) {
+    for (i = 0; i < 100; i++) {
         particles.push(new Particle(i, idNum, random(0, windowWidth), random(0, windowHeight)))
         idNum++
     }
@@ -30,13 +30,16 @@ let lastBirth = 0
 let particles = []
 let lines = []
 
+let res = 100
+MAX_LENGTH = 150
+
 function draw() {
     background(0, 150, 255);
     translate(0, -0.25*this.scrollY);
-
+    clearLines()
     scrollSpeedChange()
 
-    showGrid()
+    // showGrid()
 
     for (i of particles) {
         i.display()
@@ -44,11 +47,17 @@ function draw() {
     for (i of lines) {
         i.display()
     }
-    
 }
 
-let res = 50
-let gridDistLim = 2
+function clearLines() {
+    for (i=0; i < lines.length; i++) {
+        let line = lines[i]
+        if (line.goodLength == false) {
+            lines.splice(i, 1)
+        }
+    }
+}
+
 function evalGrid(x, y) {
     let xQuad, yQuad
 
@@ -122,7 +131,6 @@ class Particle {
         this.limits()
 
         this.quadCoor = evalGrid(this.pos.x, this.pos.y)
-        // print(this.quadCoor.x, this.quadCoor.y)
         
         this.evalLines()
     }
@@ -140,8 +148,8 @@ class Particle {
                     let same = false
                     for (let k=0; k<lines.length; k++) {
                         let l = lines[k]
-                        if (l.p1ID !== p.id && l.p2ID !== this.id) {
-                            same == true
+                        if (l.p1ID == p.id && l.p2ID == this.id) {
+                            same = true
                         }
                     }
                     if (same == false) {
@@ -169,7 +177,6 @@ class Particle {
 }
 
 class Line {
-    MAX_LENGTH = 100
     constructor(p1ID, p2ID) {
         this.p1ID = p1ID
         this.p2ID = p2ID
@@ -178,14 +185,12 @@ class Line {
 
     display() {
         
-
-        if (particles[this.p1ID].pos.dist(particles[this.p2ID].pos) > this.MAX_LENGTH) {
+        if (particles[this.p1ID].pos.dist(particles[this.p2ID].pos) > MAX_LENGTH) {
             this.goodLength = false
         }
 
-        if (this.goodLength == true) {
+        if (this.goodLength) {
             line(particles[this.p1ID].pos.x, particles[this.p1ID].pos.y, particles[this.p2ID].pos.x, particles[this.p2ID].pos.y)
-
         }
     }
 }
