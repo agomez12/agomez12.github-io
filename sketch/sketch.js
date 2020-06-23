@@ -35,12 +35,11 @@ MAX_LENGTH = 150
 
 function draw() {
     background(15, 7, 28);
-    stroke(75, 149, 201)
     translate(0, -0.25*this.scrollY);
     clearLines()
     scrollSpeedChange()
 
-    // showGrid()
+    showGrid()
 
     for (i of lines) {
         i.display()
@@ -70,7 +69,7 @@ function evalGrid(x, y) {
 
 function showGrid() {
     push()
-    stroke(0, 0, 0, 100)
+    stroke(75, 201, 86, 100)
     // render vert lines
     for (i=0; i < windowWidth; i += res) {
         line(i, 0, i, windowHeight)
@@ -124,6 +123,7 @@ class Particle {
 
     display() {
         push()
+        noStroke()
         translate(this.pos.x, this.pos.y)
         fill(245, 179, 66)
         ellipse(0, 0, this.size, this.size)
@@ -181,17 +181,24 @@ class Line {
     constructor(p1ID, p2ID) {
         this.p1ID = p1ID
         this.p2ID = p2ID
+        this.length = 0
         this.goodLength = true
+        this.thickness = 0
     }
 
     display() {
-        
-        if (particles[this.p1ID].pos.dist(particles[this.p2ID].pos) > MAX_LENGTH) {
+        push()
+        this.length = particles[this.p1ID].pos.dist(particles[this.p2ID].pos)
+        this.thickness = map(this.length, 0, MAX_LENGTH, 4, 0)
+        strokeWeight(this.thickness)
+        stroke(75, 149, 201)
+        if ( this.length > MAX_LENGTH) {
             this.goodLength = false
         }
 
         if (this.goodLength) {
             line(particles[this.p1ID].pos.x, particles[this.p1ID].pos.y, particles[this.p2ID].pos.x, particles[this.p2ID].pos.y)
         }
+        pop()
     }
 }
