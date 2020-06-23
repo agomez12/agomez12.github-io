@@ -34,17 +34,18 @@ let res = 100
 MAX_LENGTH = 150
 
 function draw() {
-    background(0, 150, 255);
+    background(15, 7, 28);
+    stroke(75, 149, 201)
     translate(0, -0.25*this.scrollY);
     clearLines()
     scrollSpeedChange()
 
     // showGrid()
 
-    for (i of particles) {
+    for (i of lines) {
         i.display()
     }
-    for (i of lines) {
+    for (i of particles) {
         i.display()
     }
 }

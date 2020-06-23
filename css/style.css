@@ -1,6 +1,8 @@
 body {
     background-color: none;
     margin: 0px;
+    font-family: 'Roboto', sans-serif;
+    
 }
 
 #main {
@@ -8,6 +10,6 @@ body {
     margin: 50px;
     width: 800px;
     height: 4000px;
-    color: black;
+    color: #bab4c2;
     font-size: 40px;
 }
