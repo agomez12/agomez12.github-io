@@ -7,7 +7,7 @@ function setup() {
     canvas.position(0, 0);
     frameRate(30);
 
-    for (i = 0; i < 100; i++) {
+    for (i = 0; i < 20; i++) {
         particles.push(new Particle(i, idNum, random(0, windowWidth), random(0, windowHeight)))
         idNum++
     }
@@ -30,8 +30,9 @@ let lastBirth = 0
 let particles = []
 let lines = []
 
-let res = 100
+let res = 50
 MAX_LENGTH = 150
+STRING_POWER = 0.2
 
 function draw() {
     background(15, 7, 28);
@@ -39,9 +40,12 @@ function draw() {
     clearLines()
     scrollSpeedChange()
 
-    showGrid()
+    // showGrid()
 
     for (i of lines) {
+        // particles[i.p1ID].pull(p5.Vector.mult(i.vec, -1))
+        // particles[i.p1ID].pull(i.vec)
+        particles[i.p2ID].pull(i.vec)
         i.display()
     }
     for (i of particles) {
@@ -118,6 +122,7 @@ class Particle {
         this.pos = createVector(x, y)
         this.vel = createVector(random(-1, 1), random(-1, 1))
         this.size = random(10, 20)
+        this.sizeSq = sq(this.size)
         this.quadCoor = createVector(0, 0)
     }
 
@@ -136,9 +141,16 @@ class Particle {
         this.evalLines()
     }
 
-    move() {
-        this.pos.add(this.vel)
+    pull(lineVec) {
+        let accX = STRING_POWER*lineVec.x/this.sizeSq
+        let accY = STRING_POWER*lineVec.y/this.sizeSq
+        let acc = createVector(accX, accY)
+        print(lineVec)
+        this.vel.add(acc)
+    }
 
+    move() {
+        this.pos.add(p5.Vector.mult(this.vel, speed))
     }
 
     evalLines() {
@@ -149,14 +161,14 @@ class Particle {
                     let same = false
                     for (let k=0; k<lines.length; k++) {
                         let l = lines[k]
-                        if (l.p1ID == p.id && l.p2ID == this.id) {
+                        if ((l.p1ID == p.id && l.p2ID == this.id)
+                        || (l.p2ID == p.id && l.p1ID == this.id)) {
                             same = true
                         }
                     }
                     if (same == false) {
                         lines.push(new Line(p.id, this.id))
                     }
-                    // line(p.pos.x, p.pos.y, this.pos.x, this.pos.y)
                 }
             }
         }
@@ -173,7 +185,12 @@ class Particle {
         } else if (this.pos.y < 0) {
             this.pos.y = windowHeight
         }
-        this.vel.setMag(random(1, 4)*speed)
+        // this.vel.setMag(random(1, 4)*speed)
+        if (this.vel.mag() < 2) {
+            this.vel.setMag(2)
+        }
+
+        this.vel.limit(10*speed)
     }
 }
 
@@ -181,6 +198,7 @@ class Line {
     constructor(p1ID, p2ID) {
         this.p1ID = p1ID
         this.p2ID = p2ID
+        this.vec = createVector(0, 0)
         this.length = 0
         this.goodLength = true
         this.thickness = 0
@@ -188,6 +206,8 @@ class Line {
 
     display() {
         push()
+        this.vec.x = particles[this.p1ID].pos.x - particles[this.p2ID].pos.x
+        this.vec.y = particles[this.p1ID].pos.y - particles[this.p2ID].pos.y
         this.length = particles[this.p1ID].pos.dist(particles[this.p2ID].pos)
         this.thickness = map(this.length, 0, MAX_LENGTH, 4, 0)
         strokeWeight(this.thickness)
