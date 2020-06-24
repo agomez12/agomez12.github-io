@@ -37,6 +37,10 @@ STRING_POWER = 0.5
 
 function draw() {
     background(15, 7, 28);
+    slingyBalls()
+}
+
+function slingyBalls() {
     translate(0, -0.25*this.scrollY);
     clearLines()
     scrollSpeedChange()
@@ -84,21 +88,6 @@ function showGrid() {
         line(0, i, windowWidth, i)
     }
     pop()
-}
-
-function testRect() {
-    fill(0, 0, 255);
-    rect(rectX, windowHeight/2, 100, 100);
-    if (rectX < 0) {
-        rightX = true
-    } else if (rectX > windowWidth - 100) {
-        rightX = false
-    }
-    if (rightX) {
-        rectX += velX*speed;
-    } else {
-        rectX -= velX*speed;
-    }
 }
 
 function scrollSpeedChange() {
