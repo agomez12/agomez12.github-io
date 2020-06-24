@@ -8,8 +8,6 @@ function setup() {
     canvas.position(0, 0);
     frameRate(30);
 
-    res = windowWidth/20
-
     for (i = 0; i < 30; i++) {
         particles.push(new Particle(i, idNum, random(0, windowWidth), random(0, windowHeight)))
         idNum++
@@ -43,8 +41,7 @@ function draw() {
     clearLines()
     scrollSpeedChange()
 
-    
-    showGrid()
+    // showGrid()
 
     for (i of lines) {
         // particles[i.p1ID].pull(p5.Vector.mult(i.vec, -1))
@@ -117,7 +114,11 @@ function scrollSpeedChange() {
 
 function windowResized() {
     resizeCanvas(windowWidth, windowHeight);
-    res = windowWidth/20
+    if (windowWidth < 500) {
+        res = 30
+    } else {
+        res = 50
+    }
 }
 
 class Particle {
@@ -191,12 +192,11 @@ class Particle {
             this.vel.y = this.vel.y * -1
             this.pos.y = this.size/2
         }
-        // this.vel.setMag(random(1, 4)*speed)
         if (this.vel.mag() < 2) {
             this.vel.setMag(2)
         }
 
-        this.vel.limit(10*speed)
+        this.vel.limit(8*speed)
     }
 }
 
