@@ -8,7 +8,7 @@ body {
 #main {
     border: red 1px solid;
     margin: 50px;
-    width: 800px;
+    width: 100% - 50px;
     height: 4000px;
     color: #bab4c2;
     font-size: 40px;
