@@ -1,5 +1,6 @@
 new p5();
 var canvas;
+let oversize = 1.1
 let idNum = 0
 function setup() {
     canvas = createCanvas(windowWidth, windowHeight);
@@ -7,7 +8,7 @@ function setup() {
     canvas.position(0, 0);
     frameRate(30);
 
-    for (i = 0; i < 20; i++) {
+    for (i = 0; i < 30; i++) {
         particles.push(new Particle(i, idNum, random(0, windowWidth), random(0, windowHeight)))
         idNum++
     }
@@ -32,7 +33,7 @@ let lines = []
 
 let res = 50
 MAX_LENGTH = 150
-STRING_POWER = 0.2
+STRING_POWER = 0.5
 
 function draw() {
     background(15, 7, 28);
@@ -174,15 +175,17 @@ class Particle {
     }
 
     limits() {
-        if (this.pos.x > windowWidth) {
+        if (this.pos.x > windowWidth + this.size) {
             this.pos.x = 0
-        } else if (this.pos.x < 0) {
+        } else if (this.pos.x < 0 - this.size) {
             this.pos.x = windowWidth
         }
-        if (this.pos.y > windowHeight) {
-            this.pos.y = 0
-        } else if (this.pos.y < 0) {
-            this.pos.y = windowHeight
+        if (this.pos.y > windowHeight - this.size) {
+            this.vel.y = this.vel.y * -1
+            this.pos.y = windowHeight - this.size
+        } else if (this.pos.y < this.size/2) {
+            this.vel.y = this.vel.y * -1
+            this.pos.y = this.size/2
         }
         // this.vel.setMag(random(1, 4)*speed)
         if (this.vel.mag() < 2) {
