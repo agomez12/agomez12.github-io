@@ -17,6 +17,7 @@ function setup() {
 
 let scrollChange = false
 let scroll = this.scrollY;
+let scrollDown = false
 let PARALLAX_AMOUNT = 0.75
 let unit = int(windowHeight/PARALLAX_AMOUNT)
 
@@ -43,7 +44,9 @@ function handleScroll() {
         let g = map(this.scrollY, unit*0.8, unit, 7, 8)
         let b = map(this.scrollY, unit*0.8, unit, 28, 36)
         background(r, g, b)
-        window.scrollTo(0, unit)
+        if (scrollDown) {
+            window.scrollTo(0, unit)
+        }
     } else if (this.scrollY >= unit) {
         background(1, 8, 36)
     }
@@ -58,6 +61,14 @@ function scrollSpeedChange() {
         scrollChange = true
     } else {scrollChange = false}
     scroll = this.scrollY;
+}
+
+function scrolling(event) {
+    if (event.deltaY < 0) {
+        scrollDown = false
+    } else {
+        scrollDown = true
+    }
 }
 
 function windowResized() {
