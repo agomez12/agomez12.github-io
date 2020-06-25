@@ -1,3 +1,7 @@
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     background-color: rgb(15, 7, 28);
     margin: 0px;
@@ -7,9 +11,19 @@ body {
 
 #main {
     border: red 1px solid;
-    margin: 50px;
-    width: 100% - 50px;
-    height: 4000px;
+    padding: 50px;
+    width: 80vw;
+    height: 123vh;
+    color: #bab4c2;
+    font-size: 40px;
+    opacity: 80%;
+}
+
+#planets {
+    border: blue 1px solid;
+    padding: 50px;
+    width: 80vw;
+    height: 120vh;
     color: #bab4c2;
     font-size: 40px;
     opacity: 80%;

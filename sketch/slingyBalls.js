@@ -70,7 +70,7 @@ class SlingyBall {
         noStroke()
         translate(this.pos.x, this.pos.y)
         fill("#E9980C")
-        circle(0, 0, this.size*0.8)
+        circle(0, 0, this.size*0.9)
         pop()
         this.move()
         this.limits()

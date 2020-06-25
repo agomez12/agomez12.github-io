@@ -18,25 +18,34 @@ function setup() {
 let scrollChange = false
 let scroll = this.scrollY;
 let PARALLAX_AMOUNT = 0.75
+let unit = int(windowHeight/PARALLAX_AMOUNT)
 
 let speeds = [1, 3];
 let speed = speeds[0];
 
 function draw() {
-    background(15, 7, 28);
+    background(0, 0, 0);
     scrollSpeedChange()
+
     handleScroll()
-    slingyBalls()
+    if (this.scrollY < unit) {
+        slingyBalls()
+    } else if (this.scrollY >= unit && this.scrollY < 2*unit) {
+        planets()
+    }
 }
 
 function handleScroll() {
-    let unit = windowHeight/PARALLAX_AMOUNT
-    if (this.scrollY > unit*0.6 && this.scrollY < unit) {
-        window.scrollTo({
-            top: unit,
-            left: 0,
-            behavior: 'smooth'
-        })
+    if (this.scrollY < unit*0.8) {
+        background(15, 7, 28);
+    } else if (this.scrollY > unit*0.8 && this.scrollY < unit) {
+        let r = map(this.scrollY, unit*0.8, unit, 15, 1)
+        let g = map(this.scrollY, unit*0.8, unit, 7, 8)
+        let b = map(this.scrollY, unit*0.8, unit, 28, 36)
+        background(r, g, b)
+        window.scrollTo(0, unit)
+    } else if (this.scrollY >= unit) {
+        background(1, 8, 36)
     }
 }
 
@@ -53,6 +62,7 @@ function scrollSpeedChange() {
 
 function windowResized() {
     resizeCanvas(windowWidth, windowHeight);
+    unit = int(windowHeight/PARALLAX_AMOUNT)
     if (windowWidth < 500) {
         res = 30
     } else {
@@ -61,18 +71,18 @@ function windowResized() {
 }
 
 function keyPressed() {
+    // s
+    if (keyCode == 83) {
+        window.scrollTo(0, 400)
+    }
     // t
     if (keyCode == 84) {
         print("scrollY:", this.scrollY)
         print("scrollX:", this.scrollX)
     }
-    // s
-    if (keyCode == 83) {
-        window.scrollTo({
-            top: 400,
-            left: 0,
-            behavior: 'smooth'
-        })
+    // u
+    if (keyCode == 85) {
+        print(unit)
     }
 
 }
