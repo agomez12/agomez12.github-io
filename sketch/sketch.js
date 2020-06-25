@@ -16,17 +16,11 @@ function setup() {
     smooth()
 }
 
-var rectX = 0
-var velX = 3
-let rightX = true
-
 let scrollChange = false
 let scroll = this.scrollY;
+
 let speeds = [1, 3];
 let speed = speeds[0];
-
-let birthRate = 800
-let lastBirth = 0
 
 let particles = []
 let lines = []
@@ -37,14 +31,31 @@ STRING_POWER = 0.5
 
 function draw() {
     background(15, 7, 28);
+    scrollSpeedChange()
     slingyBalls()
 }
 
-function slingyBalls() {
-    translate(0, -0.25*this.scrollY);
-    clearLines()
-    scrollSpeedChange()
+function keyPressed() {
+    // t
+    if (keyCode == 84) {
+        print("scrollY:", this.scrollY)
+        print("scrollX:", this.scrollX)
+    }
+    // s
+    if (keyCode == 83) {
+        window.scrollTo({
+            top: 400,
+            left: 0,
+            behavior: 'smooth'
+        })
+    }
 
+}
+
+function slingyBalls() {
+    push()
+    translate(0, -0.75*this.scrollY);
+    clearLines()
     // showGrid()
 
     for (i of lines) {
@@ -56,6 +67,7 @@ function slingyBalls() {
     for (i of particles) {
         i.display()
     }
+    pop()
 }
 
 function clearLines() {
