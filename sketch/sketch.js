@@ -1,6 +1,5 @@
 new p5();
 var canvas;
-let oversize = 1.1
 let idNum = 0
 function setup() {
     canvas = createCanvas(windowWidth, windowHeight);
@@ -24,6 +23,7 @@ let speed = speeds[0];
 
 let particles = []
 let lines = []
+let shadow = []
 
 let res = 50
 MAX_LENGTH = 150
@@ -66,6 +66,17 @@ function slingyBalls() {
     }
     for (i of particles) {
         i.display()
+    }
+
+    for (i = 0; i < shadow.length; i++) {
+        let o = map(sqrt(i), 0, sqrt(shadow.length), 0, 100)
+        let w = map(sq(i), 0, sq(shadow.length), 0, 2)
+        strokeWeight(w)
+        stroke(255, 255, 255, o)
+        line(shadow[i][0], shadow[i][1], shadow[i][2], shadow[i][3])
+    }
+    if (shadow.length > 400) {
+        shadow.splice(0, shadow.length - 400)
     }
     pop()
 }
@@ -224,6 +235,10 @@ class Line {
         }
 
         if (this.goodLength) {
+            if (int(millis())%1 == 0) {
+                shadow.push([particles[this.p1ID].pos.x, particles[this.p1ID].pos.y, particles[this.p2ID].pos.x, particles[this.p2ID].pos.y])
+                
+            }
             line(particles[this.p1ID].pos.x, particles[this.p1ID].pos.y, particles[this.p2ID].pos.x, particles[this.p2ID].pos.y)
         }
         pop()
