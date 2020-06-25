@@ -8,7 +8,7 @@ function setup() {
     frameRate(30);
 
     for (i = 0; i < 30; i++) {
-        particles.push(new Particle(i, idNum, random(0, windowWidth), random(0, windowHeight)))
+        particles.push(new SlingyBall(i, idNum, random(0, windowWidth), random(0, windowHeight)))
         idNum++
     }
 
@@ -17,100 +17,27 @@ function setup() {
 
 let scrollChange = false
 let scroll = this.scrollY;
+let PARALLAX_AMOUNT = 0.75
 
 let speeds = [1, 3];
 let speed = speeds[0];
 
-let particles = []
-let lines = []
-let shadow = []
-
-let res = 50
-MAX_LENGTH = 150
-STRING_POWER = 0.5
-
 function draw() {
     background(15, 7, 28);
     scrollSpeedChange()
+    handleScroll()
     slingyBalls()
 }
 
-function keyPressed() {
-    // t
-    if (keyCode == 84) {
-        print("scrollY:", this.scrollY)
-        print("scrollX:", this.scrollX)
-    }
-    // s
-    if (keyCode == 83) {
+function handleScroll() {
+    let unit = windowHeight/PARALLAX_AMOUNT
+    if (this.scrollY > unit*0.6 && this.scrollY < unit) {
         window.scrollTo({
-            top: 400,
+            top: unit,
             left: 0,
             behavior: 'smooth'
         })
     }
-
-}
-
-function slingyBalls() {
-    push()
-    translate(0, -0.75*this.scrollY);
-    clearLines()
-    // showGrid()
-
-    for (i of lines) {
-        // particles[i.p1ID].pull(p5.Vector.mult(i.vec, -1))
-        // particles[i.p1ID].pull(i.vec)
-        particles[i.p2ID].pull(i.vec)
-        i.display()
-    }
-    for (i of particles) {
-        i.display()
-    }
-
-    for (i = 0; i < shadow.length; i++) {
-        let o = map(sqrt(i), 0, sqrt(shadow.length), 0, 100)
-        let w = map(sq(i), 0, sq(shadow.length), 0, 2)
-        strokeWeight(w)
-        stroke(255, 255, 255, o)
-        line(shadow[i][0], shadow[i][1], shadow[i][2], shadow[i][3])
-    }
-    if (shadow.length > 400) {
-        shadow.splice(0, shadow.length - 400)
-    }
-    pop()
-}
-
-function clearLines() {
-    for (i=0; i < lines.length; i++) {
-        let line = lines[i]
-        if (line.goodLength == false) {
-            lines.splice(i, 1)
-        }
-    }
-}
-
-function evalGrid(x, y) {
-    let xQuad, yQuad
-
-    xQuad = ceil(x/res)
-    yQuad = ceil(y/res)
-
-    return createVector(xQuad, yQuad)
-}
-
-function showGrid() {
-    push()
-    stroke(75, 201, 86, 100)
-    // render vert lines
-    for (i=0; i < windowWidth; i += res) {
-        line(i, 0, i, windowHeight)
-    }
-    // render hor lines
-    for (i=0; i < windowHeight; i += res) {
-        line(0, i, windowWidth, i)
-    }
-    pop()
 }
 
 function scrollSpeedChange() {
@@ -133,114 +60,20 @@ function windowResized() {
     }
 }
 
-class Particle {
-    constructor(index, id, x, y) {
-        this.index = index
-        this.id = index
-        this.pos = createVector(x, y)
-        this.vel = createVector(random(-1, 1), random(-1, 1))
-        this.size = random(10, 20)
-        this.sizeSq = sq(this.size)
-        this.quadCoor = createVector(0, 0)
+function keyPressed() {
+    // t
+    if (keyCode == 84) {
+        print("scrollY:", this.scrollY)
+        print("scrollX:", this.scrollX)
+    }
+    // s
+    if (keyCode == 83) {
+        window.scrollTo({
+            top: 400,
+            left: 0,
+            behavior: 'smooth'
+        })
     }
 
-    display() {
-        push()
-        noStroke()
-        translate(this.pos.x, this.pos.y)
-        fill(245, 179, 66)
-        ellipse(0, 0, this.size, this.size)
-        pop()
-        this.move()
-        this.limits()
-
-        this.quadCoor = evalGrid(this.pos.x, this.pos.y)
-        
-        this.evalLines()
-    }
-
-    pull(lineVec) {
-        let accX = STRING_POWER*lineVec.x/this.sizeSq
-        let accY = STRING_POWER*lineVec.y/this.sizeSq
-        let acc = createVector(accX, accY)
-        this.vel.add(acc)
-    }
-
-    move() {
-        this.pos.add(p5.Vector.mult(this.vel, speed))
-    }
-
-    evalLines() {
-        for (i=0; i < particles.length; i++) {
-            let p = particles[i]
-            if (i !== this.index) {
-                if (p.quadCoor.equals(this.quadCoor.x, this.quadCoor.y)) {
-                    let same = false
-                    for (let k=0; k<lines.length; k++) {
-                        let l = lines[k]
-                        if ((l.p1ID == p.id && l.p2ID == this.id)
-                        || (l.p2ID == p.id && l.p1ID == this.id)) {
-                            same = true
-                        }
-                    }
-                    if (same == false) {
-                        lines.push(new Line(p.id, this.id))
-                    }
-                }
-            }
-        }
-    }
-
-    limits() {
-        if (this.pos.x > windowWidth + this.size) {
-            this.pos.x = 0
-        } else if (this.pos.x < 0 - this.size) {
-            this.pos.x = windowWidth
-        }
-        if (this.pos.y > windowHeight - this.size) {
-            this.vel.y = this.vel.y * -1
-            this.pos.y = windowHeight - this.size
-        } else if (this.pos.y < this.size/2) {
-            this.vel.y = this.vel.y * -1
-            this.pos.y = this.size/2
-        }
-        if (this.vel.mag() < 2) {
-            this.vel.setMag(2)
-        }
-
-        this.vel.limit(8*speed)
-    }
 }
 
-class Line {
-    constructor(p1ID, p2ID) {
-        this.p1ID = p1ID
-        this.p2ID = p2ID
-        this.vec = createVector(0, 0)
-        this.length = 0
-        this.goodLength = true
-        this.thickness = 0
-    }
-
-    display() {
-        push()
-        this.vec.x = particles[this.p1ID].pos.x - particles[this.p2ID].pos.x
-        this.vec.y = particles[this.p1ID].pos.y - particles[this.p2ID].pos.y
-        this.length = particles[this.p1ID].pos.dist(particles[this.p2ID].pos)
-        this.thickness = map(this.length, 0, MAX_LENGTH, 4, 0)
-        strokeWeight(this.thickness)
-        stroke(75, 149, 201)
-        if ( this.length > MAX_LENGTH) {
-            this.goodLength = false
-        }
-
-        if (this.goodLength) {
-            if (int(millis())%1 == 0) {
-                shadow.push([particles[this.p1ID].pos.x, particles[this.p1ID].pos.y, particles[this.p2ID].pos.x, particles[this.p2ID].pos.y])
-                
-            }
-            line(particles[this.p1ID].pos.x, particles[this.p1ID].pos.y, particles[this.p2ID].pos.x, particles[this.p2ID].pos.y)
-        }
-        pop()
-    }
-}
