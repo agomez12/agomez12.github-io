@@ -10,16 +10,20 @@ body {
 }
 
 #main {
+    position: absolute;
+    top: 0vh;
     border: red 1px solid;
     padding: 50px;
     width: 80vw;
-    height: 123vh;
+    height: 110vh;
     color: #bab4c2;
     font-size: 40px;
     opacity: 80%;
 }
 
 #planets {
+    position: absolute;
+    top: 133vh;
     border: blue 1px solid;
     padding: 50px;
     width: 80vw;

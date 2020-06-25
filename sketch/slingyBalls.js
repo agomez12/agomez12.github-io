@@ -5,6 +5,13 @@ let res = 50
 MAX_LENGTH = 150
 STRING_POWER = 0.5
 
+function slingyBallSetup() {
+    for (i = 0; i < 30; i++) {
+        particles.push(new SlingyBall(i, idNum, random(0, windowWidth), random(0, windowHeight)))
+        idNum++
+    }
+}
+
 function slingyBalls() {
     push()
     translate(0, -PARALLAX_AMOUNT*this.scrollY);

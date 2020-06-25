@@ -6,13 +6,10 @@ function setup() {
     canvas.parent("sketch");
     canvas.position(0, 0);
     frameRate(30);
-
-    for (i = 0; i < 30; i++) {
-        particles.push(new SlingyBall(i, idNum, random(0, windowWidth), random(0, windowHeight)))
-        idNum++
-    }
-
     smooth()
+
+    slingyBallSetup()
+    planetsSetup()
 }
 
 let scrollChange = false
@@ -26,23 +23,25 @@ let speed = speeds[0];
 
 function draw() {
     background(0, 0, 0);
+    translate(0, -PARALLAX_AMOUNT*this.scrollY)
     scrollSpeedChange()
 
     handleScroll()
     if (this.scrollY < unit) {
         slingyBalls()
-    } else if (this.scrollY >= unit && this.scrollY < 2*unit) {
+    }
+    if (this.scrollY >0 && this.scrollY < 2*unit) {
         planets()
     }
 }
 
 function handleScroll() {
-    if (this.scrollY < unit*0.8) {
+    if (this.scrollY < unit*0.6) {
         background(15, 7, 28);
-    } else if (this.scrollY > unit*0.8 && this.scrollY < unit) {
-        let r = map(this.scrollY, unit*0.8, unit, 15, 1)
-        let g = map(this.scrollY, unit*0.8, unit, 7, 8)
-        let b = map(this.scrollY, unit*0.8, unit, 28, 36)
+    } else if (this.scrollY > unit*0.6 && this.scrollY < unit) {
+        let r = map(this.scrollY, unit*0.6, unit, 15, 1)
+        let g = map(this.scrollY, unit*0.6, unit, 7, 8)
+        let b = map(this.scrollY, unit*0.6, unit, 28, 36)
         background(r, g, b)
         if (scrollDown) {
             window.scrollTo(0, unit)
@@ -79,6 +78,7 @@ function windowResized() {
     } else {
         res = 50
     }
+    planetsResize()
 }
 
 function keyPressed() {
