@@ -1,12 +1,12 @@
 let particles = []
 let lines = []
 
-let res = 50
+let res = 30
 MAX_LENGTH = 150
 STRING_POWER = 0.5
 
 function slingyBallSetup() {
-    for (i = 0; i < 30; i++) {
+    for (i = 0; i < 60; i++) {
         particles.push(new SlingyBall(i, idNum, random(0, windowWidth), random(0, windowHeight)))
         idNum++
     }
@@ -14,7 +14,7 @@ function slingyBallSetup() {
 
 function slingyBalls() {
     push()
-    translate(0, -PARALLAX_AMOUNT*this.scrollY);
+    // translate(0, -PARALLAX_AMOUNT*this.scrollY);
     clearLines()
     // showGrid()
 
